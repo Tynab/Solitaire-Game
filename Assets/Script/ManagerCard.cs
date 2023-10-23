@@ -1,9 +1,10 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using static UnityEngine.Quaternion;
 
-public class ManagerCard : MonoBehaviour
+public sealed class ManagerCard : MonoBehaviour
 {
     public GameObject CardPrefab;
     public GameObject[] PosTops;
@@ -72,7 +73,7 @@ public class ManagerCard : MonoBehaviour
         ShuffleCard(DeckCard);
         DeckCard.ForEach(x => print(x));
         SolitaireSort();
-        CreateDeckCard();
+        _ = StartCoroutine(CreateDeckCard());
     }
 
     public void ShuffleCard(List<string> list)
@@ -91,24 +92,29 @@ public class ManagerCard : MonoBehaviour
         }
     }
 
-    public void CreateDeckCard()
+    private IEnumerator CreateDeckCard()
     {
         for (var i = 0; i < 7; i++)
         {
-            print(i);
-
             var ySet = 0f;
             var zSet = 0f;
 
-            Bots[i].ForEach(x =>
+            foreach (var cardName in Bots[i])
             {
-                var newCard = Instantiate(CardPrefab, new Vector3(PosBots[i].transform.position.x, transform.position.y - ySet, transform.position.z - zSet), identity, PosBots[i].transform);
+                yield return new WaitForSeconds(0.01f);
 
-                newCard.name = x;
-                newCard.GetComponent<Selectable>().FaceUp = true;
-                ySet += 0.1f;
-                zSet += 0.03f;
-            });
+                var newCard = Instantiate(CardPrefab, new Vector3(PosBots[i].transform.position.x, PosBots[i].transform.position.y - ySet, transform.position.z - zSet), identity, PosBots[i].transform);
+
+                newCard.name = cardName;
+
+                if (Bots[i][^1] == cardName)
+                {
+                    newCard.GetComponent<Selectable>().FaceUp = true;
+                }
+
+                ySet += 0.2f;
+                zSet += 0.05f;
+            }
         }
     }
 

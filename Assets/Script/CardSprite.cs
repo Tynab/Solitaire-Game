@@ -1,7 +1,7 @@
 using UnityEngine;
 using static ManagerCard;
 
-public class CardSprite : MonoBehaviour
+public sealed class CardSprite : MonoBehaviour
 {
     public Sprite FaceCard;
     public Sprite BackCard;

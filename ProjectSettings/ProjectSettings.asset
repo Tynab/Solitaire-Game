@@ -4,7 +4,7 @@
 PlayerSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 26
-  productGUID: f444ebb87c8ab44489369537326db445
+  productGUID: 9eb6d3e010943ed42afb37cb58f7a5f2
   AndroidProfiler: 0
   AndroidFilterTouchesWhenObscured: 0
   AndroidEnableSustainedPerformanceMode: 0
@@ -13,7 +13,7 @@ PlayerSettings:
   useOnDemandResources: 0
   accelerometerFrequency: 60
   companyName: DefaultCompany
-  productName: Solitaire game
+  productName: Solitaire Game
   defaultCursor: {fileID: 0}
   cursorHotspot: {x: 0, y: 0}
   m_SplashScreenBackgroundColor: {r: 0.13725491, g: 0.12156863, b: 0.1254902, a: 1}
@@ -673,14 +673,14 @@ PlayerSettings:
   apiCompatibilityLevelPerPlatform: {}
   m_RenderingPath: 1
   m_MobileRenderingPath: 1
-  metroPackageName: Solitaire game
+  metroPackageName: Solitaire Game
   metroPackageVersion: 
   metroCertificatePath: 
   metroCertificatePassword: 
   metroCertificateSubject: 
   metroCertificateIssuer: 
   metroCertificateNotAfter: 0000000000000000
-  metroApplicationDescription: Solitaire game
+  metroApplicationDescription: Solitaire Game
   wsaImages: {}
   metroTileShortName: 
   metroTileShowName: 0
@@ -749,10 +749,10 @@ PlayerSettings:
   apiCompatibilityLevel: 6
   activeInputHandler: 0
   windowsGamepadBackendHint: 0
-  cloudProjectId: 726334cb-f9ef-4d70-8c2c-d3573142d618
+  cloudProjectId: 40c4da36-7ca1-4dd3-a1bd-f64536fad006
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
-  projectName: Solitaire game
+  projectName: Solitaire Game
   organizationId: yamiannephilim
   cloudEnabled: 0
   legacyClampBlendShapeWeights: 0

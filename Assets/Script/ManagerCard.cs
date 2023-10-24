@@ -3,13 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using static UnityEngine.Quaternion;
+using static System.Linq.Enumerable;
 
 public sealed class ManagerCard : MonoBehaviour
 {
-    public GameObject CardPrefab;
     public GameObject[] PosTops;
     public GameObject[] PosBots;
     public Sprite[] FaceCard;
+    public GameObject CardPrefab;
+    public GameObject DeckButton;
 
     public static string[] SetCard = new string[]
     {
@@ -36,16 +38,22 @@ public sealed class ManagerCard : MonoBehaviour
         "K"
     };
 
+    public List<List<string>> DeckTrips = new();
+    public List<string> TripsOnDisplay = new();
     public List<string> DeckCard = new();
+    public List<string> DisCardPile = new();
     public List<string>[] Tops;
     public List<string>[] Bots;
-    private List<string> _bot0 = new();
-    private List<string> _bot1 = new();
-    private List<string> _bot2 = new();
-    private List<string> _bot3 = new();
-    private List<string> _bot4 = new();
-    private List<string> _bot5 = new();
-    private List<string> _bot6 = new();
+    private readonly List<string> _bot0 = new();
+    private readonly List<string> _bot1 = new();
+    private readonly List<string> _bot2 = new();
+    private readonly List<string> _bot3 = new();
+    private readonly List<string> _bot4 = new();
+    private readonly List<string> _bot5 = new();
+    private readonly List<string> _bot6 = new();
+    private int _trips;
+    private int _tripsRemainder;
+    private int _deckLocation;
 
     private void Start()
     {
@@ -71,9 +79,9 @@ public sealed class ManagerCard : MonoBehaviour
     {
         DeckCard = GenerateDeckCard();
         ShuffleCard(DeckCard);
-        DeckCard.ForEach(x => print(x));
         SolitaireSort();
         _ = StartCoroutine(CreateDeckCard());
+        SortDeckIntoTrips();
     }
 
     public void ShuffleCard(List<string> list)
@@ -89,6 +97,33 @@ public sealed class ManagerCard : MonoBehaviour
             n--;
             list[k] = list[n];
             list[n] = temp;
+        }
+    }
+
+    public static List<string> GenerateDeckCard() => SetCard.SelectMany(x => Values.Select(y => x + y)).ToList();
+
+    public void DealFromDeck()
+    {
+        if (_deckLocation < _trips)
+        {
+            TripsOnDisplay.Clear();
+
+            var xPos = 2.5f;
+            var zPos = 0.2f;
+
+            DeckTrips[_deckLocation].ForEach(x =>
+            {
+                var newTopCard = Instantiate(CardPrefab, new Vector3(DeckButton.transform.position.x + xPos, DeckButton.transform.position.y, DeckButton.transform.position.z + zPos), identity, DeckButton.transform);
+
+                xPos += 0.5f;
+                newTopCard.name = x;
+                TripsOnDisplay.Add(x);
+                newTopCard.GetComponent<Selectable>().FaceUp = true;
+            });
+        }
+        else
+        {
+            RestacktopDeck();
         }
     }
 
@@ -130,5 +165,44 @@ public sealed class ManagerCard : MonoBehaviour
         }
     }
 
-    public static List<string> GenerateDeckCard() => SetCard.SelectMany(x => Values.Select(y => x + y)).ToList();
+    private void SortDeckIntoTrips()
+    {
+        _trips = DeckCard.Count / 3;
+        _tripsRemainder = DeckCard.Count % 3;
+        DeckTrips.Clear();
+
+        var index = 0;
+
+        for (var i = 0; i < _trips; i++)
+        {
+            DeckTrips.Add(Range(0, 3).Select(x => DeckCard[x + index]).ToList());
+            index += 3;
+        }
+
+        if (_tripsRemainder is not 0)
+        {
+            var myRemainders = new List<string>();
+
+            index = 0;
+
+            for (var i = 0; i < _tripsRemainder; i++)
+            {
+                myRemainders.Add(DeckCard[DeckCard.Count - _tripsRemainder + index]);
+                index++;
+            }
+
+            DeckTrips.Add(myRemainders);
+            _trips++;
+        }
+
+        _deckLocation = 0;
+    }
+
+    private void RestacktopDeck()
+    {
+        DeckCard.Clear();
+        DisCardPile.ForEach(x => DeckCard.Add(x));
+        DisCardPile.Clear();
+        SortDeckIntoTrips();
+    }
 }

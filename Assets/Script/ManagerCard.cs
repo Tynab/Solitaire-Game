@@ -77,6 +77,11 @@ public sealed class ManagerCard : MonoBehaviour
 
     public void DealCard()
     {
+        foreach (var item in Bots)
+        {
+            item.Clear();
+        }
+
         DeckCard = GenerateDeckCard();
         ShuffleCard(DeckCard);
         SolitaireSort();
@@ -104,22 +109,36 @@ public sealed class ManagerCard : MonoBehaviour
 
     public void DealFromDeck()
     {
+        foreach (Transform nameCard in DeckButton.transform)
+        {
+            if (nameCard.CompareTag("Card"))
+            {
+                _ = DeckCard.Remove(nameCard.name);
+                DisCardPile.Add(nameCard.name);
+                Destroy(nameCard.gameObject);
+            }
+        }
+
         if (_deckLocation < _trips)
         {
             TripsOnDisplay.Clear();
 
             var xPos = 2.5f;
-            var zPos = 0.2f;
+            var zPos = 0.3f;
 
             DeckTrips[_deckLocation].ForEach(x =>
             {
                 var newTopCard = Instantiate(CardPrefab, new Vector3(DeckButton.transform.position.x + xPos, DeckButton.transform.position.y, DeckButton.transform.position.z + zPos), identity, DeckButton.transform);
 
                 xPos += 0.5f;
+                zPos -= 0.3f;
                 newTopCard.name = x;
                 TripsOnDisplay.Add(x);
                 newTopCard.GetComponent<Selectable>().FaceUp = true;
+                newTopCard.GetComponent<Selectable>().IsDeckPile = true;
             });
+
+            _deckLocation++;
         }
         else
         {
@@ -132,7 +151,7 @@ public sealed class ManagerCard : MonoBehaviour
         for (var i = 0; i < 7; i++)
         {
             var ySet = 0f;
-            var zSet = 0f;
+            var zSet = 0.3f;
 
             foreach (var cardName in Bots[i])
             {
@@ -141,15 +160,28 @@ public sealed class ManagerCard : MonoBehaviour
                 var newCard = Instantiate(CardPrefab, new Vector3(PosBots[i].transform.position.x, PosBots[i].transform.position.y - ySet, transform.position.z - zSet), identity, PosBots[i].transform);
 
                 newCard.name = cardName;
+                newCard.GetComponent<Selectable>().Row = i;
 
                 if (Bots[i][^1] == cardName)
                 {
                     newCard.GetComponent<Selectable>().FaceUp = true;
                 }
 
-                ySet += 0.2f;
+                ySet += 0.3f;
                 zSet += 0.05f;
+                DisCardPile.Add(cardName);
             }
+
+            foreach (var item in DisCardPile)
+            {
+                if (DeckCard.Contains(item))
+                {
+                    _ = DeckCard.Remove(item);
+                }
+            }
+
+            DisCardPile.Clear();
+            FindObjectOfType<ManagerGame>().isplay = true;
         }
     }
 
@@ -157,7 +189,7 @@ public sealed class ManagerCard : MonoBehaviour
     {
         for (var i = 0; i < 7; i++)
         {
-            for (var j = 0; j < 7; j++)
+            for (var j = i; j < 7; j++)
             {
                 Bots[j].Add(DeckCard.LastOrDefault());
                 DeckCard.RemoveAt(DeckCard.Count - 1);

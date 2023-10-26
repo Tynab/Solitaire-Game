@@ -1,9 +1,10 @@
+using System.Linq;
 using UnityEngine;
 using static UnityEngine.Camera;
 using static UnityEngine.Input;
 using static UnityEngine.Physics2D;
-using static UnityEngine.Vector2;
 using static UnityEngine.Time;
+using static UnityEngine.Vector2;
 
 public sealed class MouseInput : MonoBehaviour
 {
@@ -31,12 +32,12 @@ public sealed class MouseInput : MonoBehaviour
         if (_times <= 0)
         {
             _times = _setTimes;
-            _clickCount = 0;
+            _clickCount = default;
         }
 
         if (_clickCount is 3)
         {
-            _times = 0;
+            _times = default;
             _clickCount = 1;
         }
 
@@ -60,9 +61,9 @@ public sealed class MouseInput : MonoBehaviour
                 {
                     var selected = hit.collider.gameObject;
 
-                    if(!selected.GetComponent<Selectable>().FaceUp)
+                    if (!selected.GetComponent<Selectable>().FaceUp)
                     {
-                        if(!blo)
+                        if (!blo)
                     }
                 }
                 else if (hit.collider.CompareTag("PosTop"))
@@ -77,10 +78,68 @@ public sealed class MouseInput : MonoBehaviour
         }
     }
 
+    private void StackBots(GameObject selected)
+    {
+        var s1 = Slot.GetComponent<Selectable>();
+        var s2 = selected.GetComponent<Selectable>();
+
+        var yPos = 0.3f;
+        var zPos = 0.01f;
+
+        for (var i = 0; i <= 13; i++)
+        {
+            if (s2.Top || s1.Values == i)
+            {
+                yPos = default;
+                break;
+            }
+        }
+
+        Slot.transform.position = new Vector3(selected.transform.position.x, selected.transform.position.y - yPos, selected.transform.position.z - zPos);
+        Slot.transform.parent = selected.transform;
+
+        if (s1.IsDeckPile)
+        {
+            _managerCard.TripsOnDisplay.Remove(Slot.name);
+        }
+        else if (s1.Top)
+        {
+            if (s2.Top && s1.Values is 1)
+            {
+                _managerCard.PosTops[s1.Row].GetComponent<Selectable>().Values = default;
+                _managerCard.PosTops[s1.Row].GetComponent<Selectable>().Suit = default;
+            }
+            else
+            {
+                _managerCard.PosTops[s1.Row].GetComponent<Selectable>().Values = s1.Values - 1;
+            }
+        }
+        else
+        {
+            _managerCard.Bots[s1.Row].Remove(Slot.name);
+        }
+
+        s1.IsDeckPile = default;
+        s1.Row = s2.Row;
+
+        if (s2.Top)
+        {
+            _managerCard.PosTops[s1.Row].GetComponent<Selectable>().Values = s1.Values;
+            _managerCard.PosTops[s1.Row].GetComponent<Selectable>().Suit = s1.Suit;
+            s1.Top = true;
+        }
+        else
+        {
+            s1.Top = default;
+        }
+
+        Slot = gameObject;
+    }
+
     private bool Blocked(GameObject selected)
     {
-        var select=selected.GetComponent<Selectable>();
+        var select = selected.GetComponent<Selectable>();
 
-        if(select.i)
+        return select.IsDeckPile ? select.name != _managerCard.TripsOnDisplay.LastOrDefault() : selected.name != _managerCard.Bots[select.Row].LastOrDefault();
     }
 }

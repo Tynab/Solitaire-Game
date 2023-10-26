@@ -2,8 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using static UnityEngine.Quaternion;
 using static System.Linq.Enumerable;
+using static UnityEngine.Quaternion;
 
 public sealed class ManagerCard : MonoBehaviour
 {
@@ -181,7 +181,7 @@ public sealed class ManagerCard : MonoBehaviour
             }
 
             DisCardPile.Clear();
-            FindObjectOfType<ManagerGame>().isplay = true;
+            FindObjectOfType<ManagerGame>().IsPlay = true;
         }
     }
 
@@ -207,7 +207,7 @@ public sealed class ManagerCard : MonoBehaviour
 
         for (var i = 0; i < _trips; i++)
         {
-            DeckTrips.Add(Range(0, 3).Select(x => DeckCard[x + index]).ToList());
+            DeckTrips.Add(Range(default, 3).Select(x => DeckCard[x + index]).ToList());
             index += 3;
         }
 
@@ -215,7 +215,7 @@ public sealed class ManagerCard : MonoBehaviour
         {
             var myRemainders = new List<string>();
 
-            index = 0;
+            index = default;
 
             for (var i = 0; i < _tripsRemainder; i++)
             {
@@ -227,7 +227,7 @@ public sealed class ManagerCard : MonoBehaviour
             _trips++;
         }
 
-        _deckLocation = 0;
+        _deckLocation = default;
     }
 
     private void RestacktopDeck()

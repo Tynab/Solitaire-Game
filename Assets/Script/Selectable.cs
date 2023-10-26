@@ -2,9 +2,9 @@ using UnityEngine;
 
 public sealed class Selectable : MonoBehaviour
 {
-    public bool FaceUp = false;
-    public bool Top = false;
-    public bool IsDeckPile = false;
+    public bool FaceUp = default;
+    public bool Top = default;
+    public bool IsDeckPile = default;
     public int Values;
     public int Row;
     public string Suit;
@@ -92,7 +92,7 @@ public sealed class Selectable : MonoBehaviour
                     }
                 default:
                     {
-                        Values = 0;
+                        Values = default;
                         break;
                     }
             }

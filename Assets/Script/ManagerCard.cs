@@ -39,11 +39,11 @@ public sealed class ManagerCard : MonoBehaviour
     };
 
     public List<List<string>> DeckTrips = new();
+    public List<string>[] Tops;
+    public List<string>[] Bots;
     public List<string> TripsOnDisplay = new();
     public List<string> DeckCard = new();
     public List<string> DisCardPile = new();
-    public List<string>[] Tops;
-    public List<string>[] Bots;
     private readonly List<string> _bot0 = new();
     private readonly List<string> _bot1 = new();
     private readonly List<string> _bot2 = new();
@@ -51,35 +51,26 @@ public sealed class ManagerCard : MonoBehaviour
     private readonly List<string> _bot4 = new();
     private readonly List<string> _bot5 = new();
     private readonly List<string> _bot6 = new();
+    private int _deckLocation;
     private int _trips;
     private int _tripsRemainder;
-    private int _deckLocation;
 
-    private void Start()
+    private void Start() => Bots = new List<string>[]
     {
-        Bots = new List<string>[]
-        {
-            _bot0,
-            _bot1,
-            _bot2,
-            _bot3,
-            _bot4,
-            _bot5,
-            _bot6
-        };
-
-        DealCard();
-    }
-
-    private void Update()
-    {
-    }
+        _bot0,
+        _bot1,
+        _bot2,
+        _bot3,
+        _bot4,
+        _bot5,
+        _bot6
+    };
 
     public void DealCard()
     {
-        foreach (var item in Bots)
+        foreach (var bot in Bots)
         {
-            item.Clear();
+            bot.Clear();
         }
 
         DeckCard = GenerateDeckCard();
@@ -91,17 +82,15 @@ public sealed class ManagerCard : MonoBehaviour
 
     public void ShuffleCard(List<string> list)
     {
-        var rnd = new System.Random();
+        var random = new System.Random();
         var n = list.Count;
 
         while (n > 1)
         {
-            var k = rnd.Next(n);
-            var temp = list[k];
+            var k = random.Next(n);
 
             n--;
-            list[k] = list[n];
-            list[n] = temp;
+            (list[n], list[k]) = (list[k], list[n]);
         }
     }
 
@@ -123,26 +112,30 @@ public sealed class ManagerCard : MonoBehaviour
         {
             TripsOnDisplay.Clear();
 
-            var xPos = 2.5f;
-            var zPos = 0.3f;
+            var xPos = 6f;
+            var zPos = 0f;
 
             DeckTrips[_deckLocation].ForEach(x =>
             {
+                TripsOnDisplay.Add(x);
+
                 var newTopCard = Instantiate(CardPrefab, new Vector3(DeckButton.transform.position.x + xPos, DeckButton.transform.position.y, DeckButton.transform.position.z + zPos), identity, DeckButton.transform);
 
-                xPos += 0.5f;
-                zPos -= 0.3f;
                 newTopCard.name = x;
-                TripsOnDisplay.Add(x);
-                newTopCard.GetComponent<Selectable>().FaceUp = true;
-                newTopCard.GetComponent<Selectable>().IsDeckPile = true;
+
+                var s = newTopCard.GetComponent<Selectable>();
+
+                s.FaceUp = true;
+                s.IsDeckPile = true;
+                xPos += 1f;
+                zPos -= 0.1f;
             });
 
             _deckLocation++;
         }
         else
         {
-            RestacktopDeck();
+            RestackTopDeck();
         }
     }
 
@@ -151,34 +144,37 @@ public sealed class ManagerCard : MonoBehaviour
         for (var i = 0; i < 7; i++)
         {
             var ySet = 0f;
-            var zSet = 0.3f;
+            var zSet = 0.01f;
 
             foreach (var cardName in Bots[i])
             {
                 yield return new WaitForSeconds(0.01f);
 
-                var newCard = Instantiate(CardPrefab, new Vector3(PosBots[i].transform.position.x, PosBots[i].transform.position.y - ySet, transform.position.z - zSet), identity, PosBots[i].transform);
+                var newCard = Instantiate(CardPrefab, new Vector3(PosBots[i].transform.position.x, PosBots[i].transform.position.y - ySet, PosBots[i].transform.position.z - zSet), identity, PosBots[i].transform);
 
                 newCard.name = cardName;
-                newCard.GetComponent<Selectable>().Row = i;
 
-                if (Bots[i][^1] == cardName)
+                var s = newCard.GetComponent<Selectable>();
+
+                s.Row = i;
+
+                if (cardName == Bots[i][^1])
                 {
-                    newCard.GetComponent<Selectable>().FaceUp = true;
+                    s.FaceUp = true;
                 }
 
-                ySet += 0.3f;
-                zSet += 0.05f;
                 DisCardPile.Add(cardName);
+                ySet += 0.2f;
+                zSet += 0.1f;
             }
 
-            foreach (var item in DisCardPile)
+            DisCardPile.ForEach(x =>
             {
-                if (DeckCard.Contains(item))
+                if (DeckCard.Contains(x))
                 {
-                    _ = DeckCard.Remove(item);
+                    _ = DeckCard.Remove(x);
                 }
-            }
+            });
 
             DisCardPile.Clear();
             FindObjectOfType<ManagerGame>().IsPlay = true;
@@ -213,27 +209,17 @@ public sealed class ManagerCard : MonoBehaviour
 
         if (_tripsRemainder is not 0)
         {
-            var myRemainders = new List<string>();
-
-            index = default;
-
-            for (var i = 0; i < _tripsRemainder; i++)
-            {
-                myRemainders.Add(DeckCard[DeckCard.Count - _tripsRemainder + index]);
-                index++;
-            }
-
-            DeckTrips.Add(myRemainders);
+            DeckTrips.Add(Range(default, _tripsRemainder).Select(x => DeckCard[DeckCard.Count - _tripsRemainder + x]).ToList());
             _trips++;
         }
 
         _deckLocation = default;
     }
 
-    private void RestacktopDeck()
+    private void RestackTopDeck()
     {
         DeckCard.Clear();
-        DisCardPile.ForEach(x => DeckCard.Add(x));
+        DeckCard.AddRange(DisCardPile);
         DisCardPile.Clear();
         SortDeckIntoTrips();
     }

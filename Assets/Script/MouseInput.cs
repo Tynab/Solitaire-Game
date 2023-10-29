@@ -1,26 +1,28 @@
 using System.Linq;
 using UnityEngine;
 using static UnityEngine.Camera;
+using static UnityEngine.GameObject;
 using static UnityEngine.Input;
 using static UnityEngine.Physics2D;
 using static UnityEngine.Time;
 using static UnityEngine.Vector2;
-using static UnityEngine.GameObject;
 
 public sealed class MouseInput : MonoBehaviour
 {
     public GameObject Slot;
+    private const float _yPos = 0.9f;
+    private const float _zPos = 0.01f;
+    private readonly float _doubleClickTime = 0.5f;
     private ManagerCard _managerCard;
     private float _times;
     private float _setTimes;
-    private float _doubleClickTime = 0.5f;
     private int _clickCount;
 
     private void Start()
     {
-        Slot = gameObject;
         _managerCard = FindObjectOfType<ManagerCard>();
         _setTimes = _times;
+        Slot = gameObject;
     }
 
     private void Update()
@@ -50,19 +52,19 @@ public sealed class MouseInput : MonoBehaviour
         var s1 = Slot.GetComponent<Selectable>();
         var s2 = selected.GetComponent<Selectable>();
 
-        return !s2.IsDeckPile && (s2.Top
-            ? (s1.Suit == s2.Suit || s1.Values is 1 && s2.Suit is null) && s1.Values == s2.Values + 1
-            : s1.Values == s2.Values - 1 && s1.Suit is not "C" and not "S" == s2.Suit is not "C" and not "S");
+        return !s2.IsDeckPile && (s2.Top ? (s1.Suit == s2.Suit || s1.Values is 1 && s2.Suit is null) && s1.Values == s2.Values + 1 : s1.Values == s2.Values - 1 && s1.Suit is not "C" and not "S" != s2.Suit is not "C" and not "S");
     }
 
     private void GetMouseClick()
     {
-        if (GetMouseButtonDown(0))
+        if (GetMouseButtonDown(default))
         {
-            var hit = Raycast(main.ScreenToWorldPoint(new Vector3(mousePosition.x, mousePosition.y, 10f)), zero);
+            var hit = Raycast(main.ScreenToWorldPoint(new Vector3(mousePosition.x, mousePosition.y, 1f)), zero);
 
             if (hit)
             {
+                var s1 = Slot.GetComponent<Selectable>();
+
                 if (hit.collider.CompareTag("Deck"))
                 {
                     _managerCard.DealFromDeck();
@@ -71,19 +73,67 @@ public sealed class MouseInput : MonoBehaviour
                 else if (hit.collider.CompareTag("Card"))
                 {
                     var selected = hit.collider.gameObject;
+                    var s2 = selected.GetComponent<Selectable>();
 
-                    if (!selected.GetComponent<Selectable>().FaceUp)
+                    if (!Blocked(selected))
                     {
-                        if (!blo)
+                        if (!s2.FaceUp)
+                        {
+                            s2.FaceUp = true;
+                            Slot = gameObject;
+
+                            if (Slot == selected && DoubleClick())
+                            {
+                                AutoStack(selected);
+                            }
+                            else
+                            {
+                                Slot = selected;
+                            }
+                        }
+                        else if (s2.IsDeckPile)
+                        {
+                            Slot = selected;
+                        }
+                    }
+
+                    if (Slot == gameObject)
+                    {
+                        Slot = selected;
+                    }
+                    else if (Slot != selected)
+                    {
+                        if (StackAble(selected))
+                        {
+                            StackCard(selected);
+                        }
+                        else
+                        {
+                            Slot = selected;
+                        }
                     }
                 }
-                else if (hit.collider.CompareTag("PosTop"))
+                else if (hit.collider.CompareTag("PosTop") && Slot.CompareTag("Card") && s1.FaceUp)
                 {
-                    print($"PosTop: {hit.collider.name}");
+                    for (var i = 1; i <= 13; i++)
+                    {
+                        if (s1.Values == i)
+                        {
+                            StackPos(hit.collider.gameObject);
+                            break;
+                        }
+                    }
                 }
-                else if (hit.collider.CompareTag("PosBot"))
+                else if (hit.collider.CompareTag("PosBot") && Slot.CompareTag("Card") && s1.FaceUp)
                 {
-                    print($"PosBot: {hit.collider.name}");
+                    for (var i = 1; i <= 13; i++)
+                    {
+                        if (s1.Values == i)
+                        {
+                            StackPos(hit.collider.gameObject);
+                            break;
+                        }
+                    }
                 }
             }
         }
@@ -96,14 +146,16 @@ public sealed class MouseInput : MonoBehaviour
         for (var i = 0; i < _managerCard.PosTops.Length; i++)
         {
             var stack = _managerCard.PosTops[i].GetComponent<Selectable>();
+            var s1 = Slot.GetComponent<Selectable>();
+            var s2 = selected.GetComponent<Selectable>();
 
-            if (selected.GetComponent<Selectable>().Values is 1 && stack.Values is 0)
+            if (s2.Values is 1 && stack.Values is 0)
             {
                 Slot = selected;
                 StackCard(stack.gameObject);
                 break;
             }
-            else if (stack.Suit == Slot.GetComponent<Selectable>().Suit && stack.Values == Slot.GetComponent<Selectable>().Values - 1 && HasNoChildren(Slot))
+            else if (stack.Suit == s1.Suit && stack.Values == s1.Values - 1 && HasNoChildren(Slot))
             {
                 Slot = selected;
 
@@ -127,12 +179,13 @@ public sealed class MouseInput : MonoBehaviour
     {
         var s1 = Slot.GetComponent<Selectable>();
         var s2 = selected.GetComponent<Selectable>();
-        var yPos = 0.3f;
-        var zPos = 0.01f;
+
+        var yPos = _yPos;
+        var zPos = _zPos;
 
         if (s2.Top || s1.Values is 13)
         {
-            yPos = 0;
+            yPos = default;
         }
 
         Slot.transform.position = new Vector3(selected.transform.position.x, selected.transform.position.y - yPos, selected.transform.position.z - zPos);
@@ -140,7 +193,7 @@ public sealed class MouseInput : MonoBehaviour
 
         if (s1.IsDeckPile)
         {
-            _managerCard.TripsOnDisplay.Remove(Slot.name);
+            _ = _managerCard.TripsOnDisplay.Remove(Slot.name);
         }
         else if (s1.Top)
         {
@@ -156,7 +209,7 @@ public sealed class MouseInput : MonoBehaviour
         }
         else
         {
-            _managerCard.Bots[s1.Row].Remove(Slot.name);
+            _ = _managerCard.Bots[s1.Row].Remove(Slot.name);
         }
 
         s1.IsDeckPile = default;
@@ -176,12 +229,13 @@ public sealed class MouseInput : MonoBehaviour
         Slot = gameObject;
     }
 
-    private void StackBots(GameObject selected)
+    private void StackPos(GameObject selected)
     {
         var s1 = Slot.GetComponent<Selectable>();
         var s2 = selected.GetComponent<Selectable>();
-        var yPos = 0.3f;
-        var zPos = 0.01f;
+
+        var yPos = _yPos;
+        var zPos = _zPos;
 
         for (var i = 0; i <= 13; i++)
         {
@@ -197,7 +251,8 @@ public sealed class MouseInput : MonoBehaviour
 
         if (s1.IsDeckPile)
         {
-            _managerCard.TripsOnDisplay.Remove(Slot.name);
+            _ = _managerCard.TripsOnDisplay.Remove(Slot.name);
+
         }
         else if (s1.Top)
         {
@@ -213,7 +268,7 @@ public sealed class MouseInput : MonoBehaviour
         }
         else
         {
-            _managerCard.Bots[s1.Row].Remove(Slot.name);
+            _ = _managerCard.Bots[s1.Row].Remove(Slot.name);
         }
 
         s1.IsDeckPile = default;
@@ -235,8 +290,8 @@ public sealed class MouseInput : MonoBehaviour
 
     private bool Blocked(GameObject selected)
     {
-        var select = selected.GetComponent<Selectable>();
+        var s2 = selected.GetComponent<Selectable>();
 
-        return select.IsDeckPile ? select.name != _managerCard.TripsOnDisplay.LastOrDefault() : selected.name != _managerCard.Bots[select.Row].LastOrDefault();
+        return s2.IsDeckPile ? s2.name != _managerCard.TripsOnDisplay.LastOrDefault() : s2.name != _managerCard.Bots[s2.Row].LastOrDefault();
     }
 }

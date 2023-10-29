@@ -19,7 +19,7 @@ public sealed class CardSprite : MonoBehaviour
 
         if (_mouseInput.Slot)
         {
-            _displayCard.color = name == _mouseInput.Slot.name ? green : white;
+            _displayCard.color = name == _mouseInput.Slot.name ? yellow : white;
         }
     }
 

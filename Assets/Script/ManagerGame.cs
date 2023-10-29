@@ -17,16 +17,14 @@ public sealed class ManagerGame : MonoBehaviour
 
     private void Start()
     {
-        TxtMessage.text = "Ready !!!";
-        TxtYourTime.text = $"your time {DisplayTime(GetYourTime())}";
+        TxtMessage.text = "Ready!!!";
+        TxtYourTime.text = $"Your time {DisplayTime(GetYourTime())}";
         PopUp.SetActive(true);
     }
 
     private void Update()
     {
-        var cards = FindGameObjectsWithTag("Card");
-
-        if (IsPlay && cards.Length <= 0)
+        if (IsPlay && FindGameObjectsWithTag("Card").Length <= 0)
         {
             OverGame();
         }
@@ -46,9 +44,7 @@ public sealed class ManagerGame : MonoBehaviour
 
     public void BtnNewGame()
     {
-        var cards = FindObjectsOfType<CardSprite>();
-
-        foreach (var card in cards)
+        foreach (var card in FindObjectsOfType<CardSprite>())
         {
             Destroy(card.gameObject);
         }
@@ -64,7 +60,7 @@ public sealed class ManagerGame : MonoBehaviour
         _isTime = default;
         SetYourTime(_countTime);
         TxtMessage.text = "You Win!";
-        TxtYourTime.text = $"your time {DisplayTime(GetYourTime())}";
+        TxtYourTime.text = $"Your time {DisplayTime(GetYourTime())}";
         PopUp.SetActive(true);
     }
 
@@ -81,5 +77,5 @@ public sealed class ManagerGame : MonoBehaviour
 
     private float GetYourTime() => GetFloat("time");
 
-    private string DisplayTime(float time) => string.Format("{0:00}:{1:00}", FloorToInt(time / 60), FloorToInt(time % 60));
+    private string DisplayTime(float time) => $"{FloorToInt(time / 60):00}:{FloorToInt(time % 60):00}";
 }

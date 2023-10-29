@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEngine;
 
 public sealed class Selectable : MonoBehaviour
@@ -16,86 +17,26 @@ public sealed class Selectable : MonoBehaviour
     {
         if (CompareTag("Card"))
         {
-            Suit = transform.name[0].ToString();
+            Suit = transform.name[default].ToString();
+            ValueString = string.Concat(transform.name.Skip(1));
 
-            for (var i = 1; i < transform.name.Length; i++)
+            Values = ValueString switch
             {
-                ValueString += transform.name[i].ToString();
-            }
-
-            switch (ValueString)
-            {
-                case "A":
-                    {
-                        Values = 1;
-                        break;
-                    }
-                case "2":
-                    {
-                        Values = 2;
-                        break;
-                    }
-                case "3":
-                    {
-                        Values = 3;
-                        break;
-                    }
-                case "4":
-                    {
-                        Values = 4;
-                        break;
-                    }
-                case "5":
-                    {
-                        Values = 5;
-                        break;
-                    }
-                case "6":
-                    {
-                        Values = 6;
-                        break;
-                    }
-                case "7":
-                    {
-                        Values = 7;
-                        break;
-                    }
-                case "8":
-                    {
-                        Values = 8;
-                        break;
-                    }
-                case "9":
-                    {
-                        Values = 9;
-                        break;
-                    }
-                case "10":
-                    {
-                        Values = 10;
-                        break;
-                    }
-                case "J":
-                    {
-                        Values = 11;
-                        break;
-                    }
-                case "Q":
-                    {
-                        Values = 12;
-                        break;
-                    }
-                case "K":
-                    {
-                        Values = 13;
-                        break;
-                    }
-                default:
-                    {
-                        Values = default;
-                        break;
-                    }
-            }
+                "A" => 1,
+                "2" => 2,
+                "3" => 3,
+                "4" => 4,
+                "5" => 5,
+                "6" => 6,
+                "7" => 7,
+                "8" => 8,
+                "9" => 9,
+                "10" => 10,
+                "J" => 11,
+                "Q" => 12,
+                "K" => 13,
+                _ => default
+            };
         }
     }
 }

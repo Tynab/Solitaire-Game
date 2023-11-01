@@ -4,7 +4,6 @@ using UnityEngine;
 public sealed class Selectable : MonoBehaviour
 {
     public bool FaceUp = default;
-    public bool Top = default;
     public bool IsDeckPile = default;
     public int Values;
     public int Row;

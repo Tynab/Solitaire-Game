@@ -7,36 +7,15 @@ using static UnityEngine.Quaternion;
 
 public sealed class ManagerCard : MonoBehaviour
 {
+    public Sprite[] FaceCard;
     public GameObject[] PosTops;
     public GameObject[] PosBots;
-    public Sprite[] FaceCard;
     public GameObject CardPrefab;
     public GameObject DeckButton;
 
-    public static string[] SetCard = new string[]
-    {
-        "H",
-        "D",
-        "C",
-        "S"
-    };
+    public static string[] SetCard = new string[] { "H", "D", "C", "S" };
 
-    public static string[] Values = new string[]
-    {
-        "A",
-        "2",
-        "3",
-        "4",
-        "5",
-        "6",
-        "7",
-        "8",
-        "9",
-        "10",
-        "J",
-        "Q",
-        "K"
-    };
+    public static string[] Values = new string[] { "A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K" };
 
     public List<List<string>> DeckTrips = new();
     public List<string>[] Tops;
@@ -55,16 +34,7 @@ public sealed class ManagerCard : MonoBehaviour
     private int _trips;
     private int _tripsRemainder;
 
-    private void Start() => Bots = new List<string>[]
-    {
-        _bot0,
-        _bot1,
-        _bot2,
-        _bot3,
-        _bot4,
-        _bot5,
-        _bot6
-    };
+    private void Start() => Bots = new List<string>[] { _bot0, _bot1, _bot2, _bot3, _bot4, _bot5, _bot6 };
 
     public void DealCard()
     {
@@ -96,7 +66,7 @@ public sealed class ManagerCard : MonoBehaviour
 
     public static List<string> GenerateDeckCard() => SetCard.SelectMany(x => Values.Select(y => x + y)).ToList();
 
-    public void DealFromDeck()
+    public IEnumerator DealFromDeck()
     {
         foreach (Transform nameCard in DeckButton.transform)
         {
@@ -115,13 +85,15 @@ public sealed class ManagerCard : MonoBehaviour
             var xPos = 6f;
             var zPos = 0f;
 
-            DeckTrips[_deckLocation].ForEach(x =>
+            foreach (var item in DeckTrips[_deckLocation])
             {
-                TripsOnDisplay.Add(x);
+                yield return new WaitForSeconds(0.03f);
+
+                TripsOnDisplay.Add(item);
 
                 var newTopCard = Instantiate(CardPrefab, new Vector3(DeckButton.transform.position.x + xPos, DeckButton.transform.position.y, DeckButton.transform.position.z + zPos), identity, DeckButton.transform);
 
-                newTopCard.name = x;
+                newTopCard.name = item;
 
                 var s = newTopCard.GetComponent<Selectable>();
 
@@ -129,7 +101,7 @@ public sealed class ManagerCard : MonoBehaviour
                 s.IsDeckPile = true;
                 xPos += 1f;
                 zPos -= 0.1f;
-            });
+            }
 
             _deckLocation++;
         }

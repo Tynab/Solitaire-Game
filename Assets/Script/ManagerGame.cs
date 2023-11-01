@@ -71,7 +71,6 @@ public sealed class ManagerGame : MonoBehaviour
         if (yourTime > time || yourTime <= 0)
         {
             SetFloat("time", time);
-            _ = GetYourTime();
         }
     }
 

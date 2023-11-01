@@ -10,17 +10,12 @@ public sealed class PosCardUp : MonoBehaviour
     {
         Card.Clear();
 
-        foreach (Transform item in GlupCard.transform)
-        {
-            Card.Add(item);
-        }
+        var cardCount = GlupCard.transform.childCount;
 
-        if (Card.Count > 0)
+        for (var i = 0; i < cardCount; i++)
         {
-            for (var i = 0; i < Card.Count; i++)
-            {
-                Card[i].GetComponent<Selectable>().FaceUp = i == Card.Count - 1;
-            }
+            Card.Add(GlupCard.transform.GetChild(i));
+            Card[i].GetComponent<Selectable>().FaceUp = i == cardCount - 1;
         }
     }
 }

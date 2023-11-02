@@ -375,7 +375,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   FaceUp: 0
-  Top: 0
   IsDeckPile: 0
   Values: 0
   Row: 0
@@ -567,7 +566,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   FaceUp: 0
-  Top: 0
   IsDeckPile: 0
   Values: 0
   Row: 0
@@ -745,7 +743,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   FaceUp: 0
-  Top: 0
   IsDeckPile: 0
   Values: 0
   Row: 0
@@ -1003,7 +1000,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   FaceUp: 0
-  Top: 0
   IsDeckPile: 0
   Values: 0
   Row: 0
@@ -1575,7 +1571,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   FaceUp: 0
-  Top: 0
   IsDeckPile: 0
   Values: 0
   Row: 0
@@ -1802,7 +1797,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   FaceUp: 0
-  Top: 0
   IsDeckPile: 0
   Values: 0
   Row: 0
@@ -2193,7 +2187,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   FaceUp: 0
-  Top: 0
   IsDeckPile: 0
   Values: 0
   Row: 0
@@ -2385,7 +2378,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   FaceUp: 0
-  Top: 0
   IsDeckPile: 0
   Values: 0
   Row: 0
@@ -2564,7 +2556,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   FaceUp: 0
-  Top: 0
   IsDeckPile: 0
   Values: 0
   Row: 0
@@ -2890,7 +2881,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   FaceUp: 0
-  Top: 0
   IsDeckPile: 0
   Values: 0
   Row: 0
@@ -3208,19 +3198,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ad4bb91b1709e9498cd0eb2d5bf75a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PosTops:
-  - {fileID: 230371216}
-  - {fileID: 1212278198}
-  - {fileID: 1035028800}
-  - {fileID: 454662471}
-  PosBots:
-  - {fileID: 1324752376}
-  - {fileID: 1198939758}
-  - {fileID: 975406505}
-  - {fileID: 1963198422}
-  - {fileID: 1226310186}
-  - {fileID: 600562791}
-  - {fileID: 34188331}
   FaceCard:
   - {fileID: 21300000, guid: 134a6822c050bd04cba592c934a6f6ed, type: 3}
   - {fileID: 21300000, guid: a80d2f70c6c99b3409009708bf638888, type: 3}
@@ -3274,11 +3251,26 @@ MonoBehaviour:
   - {fileID: 21300000, guid: a196b3727a318cd40a33fdffdcab4684, type: 3}
   - {fileID: 21300000, guid: dec6ce0b4d3e4534c966419cf09c8bd8, type: 3}
   - {fileID: 21300000, guid: c3c730b1616a25f4db823c33bc7481ff, type: 3}
+  PosTops:
+  - {fileID: 230371216}
+  - {fileID: 1212278198}
+  - {fileID: 1035028800}
+  - {fileID: 454662471}
+  PosBots:
+  - {fileID: 1324752376}
+  - {fileID: 1198939758}
+  - {fileID: 975406505}
+  - {fileID: 1963198422}
+  - {fileID: 1226310186}
+  - {fileID: 600562791}
+  - {fileID: 34188331}
   CardPrefab: {fileID: 8949091621847208831, guid: e47e610d005bb014f978fe27600fb47f, type: 3}
   DeckButton: {fileID: 2065622092}
   TripsOnDisplay: []
   DeckCard: []
   DisCardPile: []
+  _emptyPos: {fileID: 21300000, guid: dad99cc115f7ec143b4dec916337800f, type: 3}
+  _cardSleeve: {fileID: 21300000, guid: 4e91445daa38b914b8cafafc0c273166, type: 3}
 --- !u!4 &1618202105
 Transform:
   m_ObjectHideFlags: 0
@@ -3634,7 +3626,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   FaceUp: 0
-  Top: 0
   IsDeckPile: 0
   Values: 0
   Row: 0

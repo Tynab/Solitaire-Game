@@ -2,8 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Assertions;
 using static System.Linq.Enumerable;
 using static UnityEngine.Quaternion;
+using static UnityEngine.GameObject;
 
 public sealed class ManagerCard : MonoBehaviour
 {
@@ -33,6 +35,9 @@ public sealed class ManagerCard : MonoBehaviour
     private int _deckLocation;
     private int _trips;
     private int _tripsRemainder;
+
+    [SerializeField] private Sprite _emptyPos;
+    [SerializeField] private Sprite _cardSleeve;
 
     private void Start() => Bots = new List<string>[] { _bot0, _bot1, _bot2, _bot3, _bot4, _bot5, _bot6 };
 
@@ -82,8 +87,8 @@ public sealed class ManagerCard : MonoBehaviour
         {
             TripsOnDisplay.Clear();
 
-            var xPos = 6f;
-            var zPos = 0f;
+            var xSet = 6f;
+            var zSet = 0f;
 
             foreach (var item in DeckTrips[_deckLocation])
             {
@@ -91,7 +96,7 @@ public sealed class ManagerCard : MonoBehaviour
 
                 TripsOnDisplay.Add(item);
 
-                var newTopCard = Instantiate(CardPrefab, new Vector3(DeckButton.transform.position.x + xPos, DeckButton.transform.position.y, DeckButton.transform.position.z + zPos), identity, DeckButton.transform);
+                var newTopCard = Instantiate(CardPrefab, new Vector3(DeckButton.transform.position.x + xSet, DeckButton.transform.position.y, DeckButton.transform.position.z + zSet), identity, DeckButton.transform);
 
                 newTopCard.name = item;
 
@@ -99,11 +104,16 @@ public sealed class ManagerCard : MonoBehaviour
 
                 s.FaceUp = true;
                 s.IsDeckPile = true;
-                xPos += 1f;
-                zPos -= 0.1f;
+                xSet += 1f;
+                zSet -= 0.1f;
             }
 
             _deckLocation++;
+
+            if (_deckLocation >= _trips)
+            {
+                Find("DeckCard").GetComponent<SpriteRenderer>().sprite = _emptyPos;
+            }
         }
         else
         {
@@ -169,7 +179,7 @@ public sealed class ManagerCard : MonoBehaviour
     {
         _trips = DeckCard.Count / 3;
         _tripsRemainder = DeckCard.Count % 3;
-        DeckTrips.Clear();
+        //DeckTrips.Clear();
 
         var index = 0;
 
@@ -190,6 +200,7 @@ public sealed class ManagerCard : MonoBehaviour
 
     private void RestackTopDeck()
     {
+        Find("DeckCard").GetComponent<SpriteRenderer>().sprite = _cardSleeve;
         DeckCard.Clear();
         DeckCard.AddRange(DisCardPile);
         DisCardPile.Clear();

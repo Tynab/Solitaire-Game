@@ -2,16 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.Assertions;
 using static System.Linq.Enumerable;
-using static UnityEngine.Quaternion;
 using static UnityEngine.GameObject;
+using static UnityEngine.Quaternion;
 
 public sealed class ManagerCard : MonoBehaviour
 {
     public Sprite[] FaceCard;
     public GameObject[] PosTops;
     public GameObject[] PosBots;
+    public Sprite EmptyPos;
+    public Sprite CardSleeve;
     public GameObject CardPrefab;
     public GameObject DeckButton;
 
@@ -35,9 +36,6 @@ public sealed class ManagerCard : MonoBehaviour
     private int _deckLocation;
     private int _trips;
     private int _tripsRemainder;
-
-    [SerializeField] private Sprite _emptyPos;
-    [SerializeField] private Sprite _cardSleeve;
 
     private void Start() => Bots = new List<string>[] { _bot0, _bot1, _bot2, _bot3, _bot4, _bot5, _bot6 };
 
@@ -112,7 +110,7 @@ public sealed class ManagerCard : MonoBehaviour
 
             if (_deckLocation >= _trips)
             {
-                Find("DeckCard").GetComponent<SpriteRenderer>().sprite = _emptyPos;
+                Find("DeckCard").GetComponent<SpriteRenderer>().sprite = EmptyPos;
             }
         }
         else
@@ -179,7 +177,7 @@ public sealed class ManagerCard : MonoBehaviour
     {
         _trips = DeckCard.Count / 3;
         _tripsRemainder = DeckCard.Count % 3;
-        //DeckTrips.Clear();
+        DeckTrips.Clear();
 
         var index = 0;
 
@@ -200,10 +198,14 @@ public sealed class ManagerCard : MonoBehaviour
 
     private void RestackTopDeck()
     {
-        Find("DeckCard").GetComponent<SpriteRenderer>().sprite = _cardSleeve;
         DeckCard.Clear();
         DeckCard.AddRange(DisCardPile);
         DisCardPile.Clear();
         SortDeckIntoTrips();
+
+        if (DeckCard.Any())
+        {
+            Find("DeckCard").GetComponent<SpriteRenderer>().sprite = CardSleeve;
+        }
     }
 }

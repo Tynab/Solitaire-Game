@@ -50,6 +50,7 @@ public sealed class ManagerGame : MonoBehaviour
         }
 
         FindObjectOfType<ManagerCard>().DealCard();
+        Find("DeckCard").GetComponent<SpriteRenderer>().sprite = FindObjectOfType<ManagerCard>().CardSleeve;
         _isTime = true;
         _countTime = default;
         IsPlay = default;

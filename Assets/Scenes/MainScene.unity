@@ -3264,13 +3264,13 @@ MonoBehaviour:
   - {fileID: 1226310186}
   - {fileID: 600562791}
   - {fileID: 34188331}
+  EmptyPos: {fileID: 21300000, guid: dad99cc115f7ec143b4dec916337800f, type: 3}
+  CardSleeve: {fileID: 21300000, guid: 4e91445daa38b914b8cafafc0c273166, type: 3}
   CardPrefab: {fileID: 8949091621847208831, guid: e47e610d005bb014f978fe27600fb47f, type: 3}
   DeckButton: {fileID: 2065622092}
   TripsOnDisplay: []
   DeckCard: []
   DisCardPile: []
-  _emptyPos: {fileID: 21300000, guid: dad99cc115f7ec143b4dec916337800f, type: 3}
-  _cardSleeve: {fileID: 21300000, guid: 4e91445daa38b914b8cafafc0c273166, type: 3}
 --- !u!4 &1618202105
 Transform:
   m_ObjectHideFlags: 0

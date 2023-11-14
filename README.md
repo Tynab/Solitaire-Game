@@ -16,7 +16,7 @@ Whether you're a casual player or a Solitaire enthusiast, this timeless game off
 
 </div>
 
-## HÌNH ẢNH DEMO
+## IMAGE DEMO
 <p align='center'>
 <img src='pic/0.jpg'></img>
 </p>

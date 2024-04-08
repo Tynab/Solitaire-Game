@@ -12,7 +12,7 @@ Whether you're a casual player or a Solitaire enthusiast, this timeless game off
 ## LINK DEMO
 <div align='center'>
 
-[Click vào đây để chơi game](https://tynab.github.io/Solitaire-Game)
+[Click here to play the game](https://tynab.github.io/Solitaire-Game)
 
 </div>
 
